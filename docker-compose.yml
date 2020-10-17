@@ -1,0 +1,34 @@
+version: '3'
+volumes:
+    webpack_build:
+services:
+    server:
+        container_name: react-ssr-server
+        build: .
+        command: npm run dev:server
+        volumes:
+            - .:/app
+            - /app/node_modules
+            - webpack_build:/app/build
+        expose:
+            - ${SERVER_PORT}
+        ports:
+            - ${SERVER_PORT}:${SERVER_PORT}
+        environment:
+            - NODE_ENV=development
+    client:
+        container_name: react-ssr-client
+        build: .
+        command: npm run dev:client
+        volumes:
+            - .:/app
+            - /app/node_modules
+            - webpack_build:/app/build
+        expose:
+            - ${CLIENT_WDS_PORT}
+        ports:
+            - ${CLIENT_WDS_PORT}:${CLIENT_WDS_PORT}
+        links:
+            - server
+        environment:
+            - NODE_ENV=development
